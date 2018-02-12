@@ -1,6 +1,5 @@
 #include <glm/glm.hpp>
 #include <graphics_framework.h>
-#include <memory>
 
 using namespace std;
 using namespace graphics_framework;
@@ -18,10 +17,10 @@ bool load_content()
 	geometry geom;
 	// Create triangle data
 	// Positions
-	vector<vec3> positions{ vec3(0.0f, 4.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(4.0f, 0.0f, 0.0f) };
+	vector<vec2> positions{ vec2(1, 1), vec2(0, 1), vec2(0, 0), vec2(1,0) };
 	// *********************************
 	// Define texture coordinates for triangle
-	vector<vec2> tex_coords{ vec2(0, 1), vec2(0, 0), vec2(1, 0) };
+	vector<vec2> tex_coords{ vec2(2, 2), vec2(-1, 2), vec2(-1, 1), vec2(2,-1) };
 	// *********************************
 	// Add to the geometry
 	geom.add_buffer(positions, POSITION_BUFFER);
@@ -45,7 +44,7 @@ bool load_content()
 	// Build effect
 	eff.build();
 	// Load texture "textures/sign.jpg"
-	tex = texture("textures/smiley.png");
+	tex = texture("textures/sign.jpg");
 	// *********************************
 
 	// Set camera properties
