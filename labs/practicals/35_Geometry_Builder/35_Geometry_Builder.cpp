@@ -16,42 +16,56 @@ bool load_content() {
 
   // *********************************
   // box
-
+  //geometry geom = geometry_builder::create_box(vec3(1,1,1));
   // Tetrahedron
-
+  //geometry geom2 = geometry_builder::create_tetrahedron(vec3(1, 1, 1));
   // Pyramid
-
+  //geometry geom3 = geometry_builder::create_pyramid(vec3 (1, 1, 1));
   // Disk
-
+  //geometry geom4 = geometry_builder::create_disk(2, vec3(1, 1, 1));
   // Cylinder
-
+  //geometry geom5 = geometry_builder::create_cylinder(10, 2,vec3(1, 1, 1));
   // Sphere
-
+  //geometry geom6 = geometry_builder::create_sphere(2 ,4, vec3(1, 1, 1));
   // Torus
-
+  //geometry geom7 = geometry_builder::create_torus(5, 3, 1, 1);
+  meshes["box"] = mesh(geometry_builder::create_box());
+  // Tetrahedron
+  meshes["tetrahedron"] = mesh(geometry_builder::create_tetrahedron());
+  // Pyramid
+  meshes["pyramid"] = mesh(geometry_builder::create_pyramid());
+  // Disk
+  meshes["disk"] = mesh(geometry_builder::create_disk(20));
+  // Cylinder
+  meshes["cylinder"] = mesh(geometry_builder::create_cylinder(20, 20));
+  // Sphere
+  meshes["sphere"] = mesh(geometry_builder::create_sphere(20, 20));
+  // Torus
+  meshes["torus"] = mesh(geometry_builder::create_torus(20, 20, 1, 5));
 
   // Set the transforms for your meshes here
   // 5x scale, move(-10.0f, 2.5f, -30.0f)
-
-
+  meshes["box"].get_transform().scale *= 5;
+  meshes["box"].get_transform().translate(vec3(-10.0f, 2.5f, -30.0f));
   // 4x scale, move(-30.0f, 10.0f, -10.0f)
-
-
+  meshes["tetrahedron"].get_transform().scale *= 4;
+  meshes["tetrahedron"].get_transform().translate(vec3(-30.0f, 10.0f, -10.0f));
   // 5x scale, move(-10.0f, 7.5f, -30.0f)
-
-
+  meshes["pyramid"].get_transform().scale *= 5;
+  meshes["pyramid"].get_transform().translate(vec3(-10.0f, 7.5f, -30.0f));
   // scale(3.0f, 1.0f, 3.0f), move(-10.0f, 11.5f, -30.0f), 180 rotate X axis
-
-
-
+  meshes["disk"].get_transform().scale = vec3(3.0f, 1.0f, 3.0f);
+  meshes["disk"].get_transform().translate(vec3(-10.0f, 11.5f, -30.0f));
+  meshes["disk"].get_transform().rotate(vec3(89.6f, 0.0f, 0.0f));
   // 5x scale, move(-25.0f, 2.5f, -25.0f)
-
-
+  meshes["cylinder"].get_transform().scale *= 5;
+  meshes["cylinder"].get_transform().translate(vec3(-25.0f, 2.5f, -25.0f));
   // 2.5x scale, move(-25.0f, 10.0f, -25.0f)
-
-
+  meshes["sphere"].get_transform().scale *= 2.5;
+  meshes["sphere"].get_transform().translate(vec3(-25.0f, 10.0f, -25.0f));
   // 180 rotate X axis, move(-25.0f, 10.0f, -25.0f)
-
+  meshes["torus"].get_transform().rotate(vec3(89.5f, 0.0f, 00.0f));
+  meshes["torus"].get_transform().translate(vec3(-25.0f, 10.0f, -25.0f));
 
   // *********************************
 
@@ -93,9 +107,10 @@ bool render() {
     glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(MVP));
 
     // *********************************
-    // Bind texture to renderer
-
-    // Set the texture value for the shader here
+	// Bind texture to renderer
+	renderer::bind(tex, 0);
+	// Set the texture value for the shader here
+	glUniform1i(eff.get_uniform_location("tex"), 0);
 
     // *********************************
     // Render mesh
