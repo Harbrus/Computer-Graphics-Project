@@ -10,16 +10,14 @@ effect eff;
 target_camera cam;
 
 bool load_content() {
-  // *********************************
-  // Set geometry type to triangle strip
-
-  // *********************************
-  // Positions
-  vector<vec3> positions{
-      // *********************************
-      // Add the position data for two triangles here
-
-      // *********************************
+	geom.set_type(GL_TRIANGLE_STRIP);
+	// Create quad data
+	// Positions
+	vector<vec3> positions{
+		vec3(0.0f, 0.0f, 0.0f), //v0
+		vec3(1.5f, -1.0f, 0.0f),  //v2
+		vec3(1.0f, 1.0f, 0.0f), //v1
+		vec3(2.0f, 0.8f, 0.0f), //v3
   };
   // Colours
   vector<vec4> colours{vec4(1.0f, 0.0f, 0.0f, 1.0f), vec4(1.0f, 0.0f, 0.0f, 1.0f), vec4(1.0f, 0.0f, 0.0f, 1.0f),

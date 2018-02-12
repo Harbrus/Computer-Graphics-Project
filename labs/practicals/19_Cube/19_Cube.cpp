@@ -15,33 +15,49 @@ bool load_content() {
   // Create cube data - twelve triangles triangles
   // Positions
   vector<vec3> positions{
-      // *********************************
-      // Add the position data for triangles here, (6 verts per side)
-      // Front
-
-
-      // Back
-
-
-      // Right
-
-
-      // Left
-
-
-      // Top
-
-
-      // Bottom
-
-
-      // *********************************
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, -1.0f, 1.0f),
+	  vec3(-1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, 1.0f, -1.0f),
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, 1.0f, -1.0f),
+	  vec3(1.0f, -1.0f, 1.0f),
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(1.0f, -1.0f, -1.0f),
+	  vec3(1.0f, 1.0f, -1.0f),
+	  vec3(1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, 1.0f, 1.0f),
+	  vec3(-1.0f, 1.0f, -1.0f),
+	  vec3(1.0f, -1.0f, 1.0f),
+	  vec3(-1.0f, -1.0f, 1.0f),
+	  vec3(-1.0f, -1.0f, -1.0f),
+	  vec3(-1.0f, 1.0f, 1.0f),
+	  vec3(-1.0f, -1.0f, 1.0f),
+	  vec3(1.0f, -1.0f, 1.0f),
+	  vec3(1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, -1.0f, -1.0f),
+	  vec3(1.0f, 1.0f, -1.0f),
+	  vec3(1.0f, -1.0f, -1.0f),
+	  vec3(1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, -1.0f, 1.0f),
+	  vec3(1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, 1.0f, -1.0f),
+	  vec3(-1.0f, 1.0f, -1.0f),
+	  vec3(1.0f, 1.0f, 1.0f),
+	  vec3(-1.0f, 1.0f, -1.0f),
+	  vec3(-1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, 1.0f, 1.0f),
+	  vec3(-1.0f, 1.0f, 1.0f),
+	  vec3(1.0f, -1.0f, 1.0f)
   };
   // Colours
   vector<vec4> colours;
   for (auto i = 0; i < positions.size(); ++i) {
     colours.push_back(vec4(1.0, i % 2, 0.0f, 1.0f)); // Notice how I got those Rad colours?
   }
+
   // Add to the geometry
   geom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);
   geom.add_buffer(colours, BUFFER_INDEXES::COLOUR_BUFFER);
@@ -58,6 +74,7 @@ bool load_content() {
   auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
   cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
   return true;
+  
 }
 
 bool update(float delta_time) {
@@ -102,4 +119,5 @@ void main() {
   application.set_render(render);
   // Run application
   application.run();
+  
 }

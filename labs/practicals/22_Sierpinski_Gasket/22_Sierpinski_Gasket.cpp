@@ -18,28 +18,30 @@ void triangle(const vector<vec3> &points, vector<vec3> &positions, vector<vec4> 
 
 }
 
-void divide_triangle(const vector<vec3> &points, unsigned int count, vector<vec3> &positions, vector<vec4> &colours) {
-  // *********************************
-  // IF we have more divisions to do?
+void sierpinsky(const vector<vec3> &points, unsigned int count, vector<vec3> &positions, vector<vec4> &colours) {
+	if (count > 0 && points.size() == 3)
+	{
+		// Calculate new vertices to work on
+		vec3 midp0 = (points[0] + points[1]) / 2.0f;
+		vec3 midp1 = (points[1] + points[2]) / 2.0f;
+		vec3 midp2 = (points[2] + points[0]) / 2.0f;
 
-    // Calculate new vertices to work on
-
-    // Divide new triangles
-
-
-
-
-
-
-
-  // *********************************
+		//Divide triangles
+		sierpinsky({ points[0], midp0, midp2 }, count - 1, positions, colours);
+		sierpinsky({ midp1, points[2], midp2 }, count - 1, positions, colours);
+		sierpinsky({ midp0, points[1], midp1 }, count - 1, positions, colours);
+	}
+	else
+	{
+		triangle(points, positions, colours);
+	}
 }
 
 bool load_content() {
   // Required buffers
   vector<vec3> positions;
   vector<vec4> colours;
-  divide_triangle({vec3(1.0f, -1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec3(-1.0f, -1.0f, 0.0f)}, 4, positions, colours);
+  sierpinsky({vec3(1.0f, -1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec3(-1.0f, -1.0f, 0.0f)}, 4, positions, colours);
 
   // Add to the geometry
   geom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);

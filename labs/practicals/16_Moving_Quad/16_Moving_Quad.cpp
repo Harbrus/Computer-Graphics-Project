@@ -60,11 +60,7 @@ bool render() {
   // Bind effect
   renderer::bind(eff);
   mat4 T(1.0f);
-  // *********************************
-  // Create translation matrix - use pos vector
-
-  // *********************************
-  // Create MVP matrix
+  T = translate (mat4(1.0f), pos);
   auto V = cam.get_view();
   auto P = cam.get_projection();
   auto MVP = P * V * T;

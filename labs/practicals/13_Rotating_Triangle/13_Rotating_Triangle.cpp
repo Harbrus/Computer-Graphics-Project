@@ -46,10 +46,10 @@ bool render() {
   // Bind effect
   renderer::bind(eff);
   mat4 R;
-  // *********************************
-  // Create rotation matrix - rotate around Z axis by theta
+  R = rotate(mat4(1.0f), theta, vec3(1.0f, 0.0f, 0.0f));
+ // mat4 Ry = rotate(mat4(1.0f), (pi<float>() / 2), vec3(0.0f, 1.0f, 0.0f));
+  //mat4 Rz = rotate(mat4(1.0f), (pi<float>() / 2), vec3(0.0f, 0.0f, 1.0f));
 
-  // *********************************
   // Create MVP matrix
   auto V = cam.get_view();
   auto P = cam.get_projection();

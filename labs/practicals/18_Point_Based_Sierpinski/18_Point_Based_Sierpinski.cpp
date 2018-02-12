@@ -8,6 +8,10 @@ using namespace glm;
 geometry geom;
 effect eff;
 target_camera cam;
+vec3 pos(0.0f, 0.0f, 0.0f);
+float s = 0.0f;
+float total_time = 0.0f;
+float theta = 0.0f;
 
 const int num_points = 50000;
 
@@ -26,51 +30,76 @@ void create_sierpinski(geometry &geom) {
   colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
   // Add random points using distribution
   for (auto i = 1; i < num_points; ++i) {
-    // *********************************
-    // Add random point
+	  // *********************************
+	  auto n = dist(e);
+	  vector<vec3> newPoints;
+	  newPoints.push_back(vec3(0.0f, 0.0f, 0.0f));
+	  newPoints[0] = (points[i-1] + v[n]) / 2.0f;
+	  points.push_back(newPoints[0]);
+	  colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	  newPoints.clear();
 
-    // Add colour - all points red
-
-    // *********************************
   }
-  // *********************************
-  // Add buffers to geometry
-
-
-  // *********************************
+  geom.add_buffer(points, BUFFER_INDEXES::POSITION_BUFFER);
+  geom.add_buffer(colours, BUFFER_INDEXES::COLOUR_BUFFER);
 }
 
-bool load_content() {
-  // Set to points type
-  geom.set_type(GL_POINTS);
-  // Create sierpinski gasket
-  create_sierpinski(geom);
+  bool load_content() {
+	  // Set to points type
+	  geom.set_type(GL_POINTS);
+	  // Create sierpinski gasket
+	  create_sierpinski(geom);
 
-  // Load in shaders
-  eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
-  eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
-  // Build effect
-  eff.build();
+	  // Load in shaders
+	  eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
+	  eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
+	  // Build effect
+	  eff.build();
 
-  // Set camera properties
-  cam.set_position(vec3(2.0f, 2.0f, 2.0f));
-  cam.set_target(vec3(0.0f, 0.0f, 0.0f));
-  auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
-  cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
-  return true;
-}
+	  // Set camera properties
+	  cam.set_position(vec3(2.0f, 2.0f, 2.0f));
+	  cam.set_target(vec3(0.0f, 0.0f, 0.0f));
+	  auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
+	  cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
+	  return true;
+  }
 
 bool update(float delta_time) {
-  // Update the camera
-  cam.update(delta_time);
-  return true;
+	// Accumulate time
+	total_time += delta_time;
+	// Update the scale - base on sin wave
+	s = 1.0f + sinf(total_time);
+	// Multiply by 5
+	s *= 5.0f;
+	// Increment theta - half a rotation per second
+	theta += pi<float>() * delta_time;
+	// Check if key is pressed
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_UP)) {
+		pos += vec3(0.0f, 0.0f, -5.0f) * delta_time;
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_DOWN)) {
+		pos += vec3(0.0f, 0.0f, 5.0f) * delta_time;
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_LEFT)) {
+		pos += vec3(-5.0f, 0.0f, 0.0f) * delta_time;
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_RIGHT)) {
+		pos += vec3(5.0f, 0.0f, 0.0f) * delta_time;
+	}
+	// Update the camera
+	cam.update(delta_time);
+	return true;
 }
 
 bool render() {
   // Bind effect
   renderer::bind(eff);
+  mat4 T, R, S, M;
+  S = scale(mat4(1.0f), vec3(s, s, s));
+  R = rotate(mat4(1.0f), theta, vec3(1.0f, 0.0f, 0.0f));
+  T = translate(mat4(1.0f), pos);
+  M = T * (R*S);
   // Create MVP matrix
-  mat4 M(1.0f);
   auto V = cam.get_view();
   auto P = cam.get_projection();
   auto MVP = P * V * M;
