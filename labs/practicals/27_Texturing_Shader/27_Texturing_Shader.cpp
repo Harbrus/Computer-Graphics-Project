@@ -1,41 +1,35 @@
-#include <glm/glm.hpp>
+#include <glm\glm.hpp>
 #include <graphics_framework.h>
+#include <memory>
 
 using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 
 mesh m;
-mesh m2;
 effect eff;
 target_camera cam;
 texture tex;
 
-bool load_content()
-{
+bool load_content() {
 	// Construct geometry object
 	geometry geom;
 	// Create triangle data
 	// Positions
-	vector<vec2> positions{ vec2(1, 1), vec2(0, 1), vec2(0, 0), vec2(1,0) };
+	vector<vec3> positions{ vec3(0.0f, 1.0f, 0.0f), vec3(-1.0f, -1.0f, 0.0f), vec3(1.0f, -1.0f, 0.0f) };
 	// *********************************
 	// Define texture coordinates for triangle
-	vector<vec2> tex_coords{ vec2(2, 2), vec2(-1, 2), vec2(-1, 1), vec2(2,-1) };
+	vector<vec2> tex_coords{ vec2(0.5f, 1.0f), vec2(0.0f,0.0f), vec2(1.0f, 0.0f) };
 	// *********************************
 	// Add to the geometry
-	geom.add_buffer(positions, POSITION_BUFFER);
+	geom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);
 	// *********************************
 	// Add texture coordinate buffer to geometry
-	geom.add_buffer(tex_coords, TEXTURE_COORDS_0);
+	geom.add_buffer(tex_coords, BUFFER_INDEXES::TEXTURE_COORDS_0);
 	// *********************************
-
-	geometry geom2;
-	geom2.add_buffer(vector<vec3> { vec3(0, 4, 0), vec3(4, 0, 0), vec3(4, 4, 0) }, POSITION_BUFFER);
-	geom2.add_buffer(vector<vec2> { vec2(0, 1), vec2(1, 0), vec2(1, 1) }, TEXTURE_COORDS_0);
 
 	// Create mesh object
 	m = mesh(geom);
-	m2 = mesh(geom2);
 
 	// Load in texture shaders here
 	eff.add_shader("27_Texturing_Shader/simple_texture.vert", GL_VERTEX_SHADER);
@@ -56,15 +50,13 @@ bool load_content()
 	return true;
 }
 
-bool update(float delta_time)
-{
+bool update(float delta_time) {
 	// Update the camera
 	cam.update(delta_time);
 	return true;
 }
 
-bool render()
-{
+bool render() {
 	// Bind effect
 	renderer::bind(eff);
 	// Create MVP matrix
@@ -81,19 +73,18 @@ bool render()
 										 // *********************************
 										 // Bind texture to renderer
 	renderer::bind(tex, 0);
+
 	// Set the texture value for the shader here
 	glUniform1i(eff.get_uniform_location("tex"), 0);
 	// *********************************
 
 	// Render the mesh
 	renderer::render(m);
-	renderer::render(m2);
 
 	return true;
 }
 
-void main()
-{
+void main() {
 	// Create application
 	app application("27_Texturing_Shader");
 	// Set load content, update and render methods
