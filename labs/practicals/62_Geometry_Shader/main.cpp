@@ -32,15 +32,14 @@ bool load_content()
     geom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);
     geom.add_buffer(colours, BUFFER_INDEXES::COLOUR_BUFFER);
 
-    // Load in shaders
-    eff.add_shader("shader.vert", GL_VERTEX_SHADER); 
-    eff.add_shader("shader.frag", GL_FRAGMENT_SHADER);
+	// Load in shaders
+	eff.add_shader("62_Geometry_Shader/shader.vert", GL_VERTEX_SHADER);
+	eff.add_shader("62_Geometry_Shader/shader.frag", GL_FRAGMENT_SHADER);
 
-    // ********************
-    // Load geometry shader
-    // ********************
-    eff.add_shader("shader.geom", GL_GEOMETRY_SHADER);
-
+	// ********************
+	// Load geometry shader
+	// ********************
+	eff.add_shader("62_Geometry_Shader/shader.geom", GL_GEOMETRY_SHADER);
     // Build effect
     eff.build();
 

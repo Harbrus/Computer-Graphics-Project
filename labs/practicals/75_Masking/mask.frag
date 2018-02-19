@@ -14,11 +14,11 @@ layout(location = 0) out vec4 colour;
 void main() {
   // *********************************
   // Sample textures
-
-
+  vec4 renderText = texture(tex,tex_coord);
+  vec4 alphaText = texture(alpha_map,tex_coord);
   // Final colour is produce of these two colours
-
+  colour = renderText * alphaText;
   // Ensure alpha is 1
-
+  colour.a = 1.0;
   // *********************************
 }

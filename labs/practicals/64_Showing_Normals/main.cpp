@@ -1,4 +1,4 @@
-#include <graphics_framework.h>
+/*#include <graphics_framework.h>
 #include <glm\glm.hpp>
 
 using namespace std;
@@ -220,4 +220,4 @@ void main()
     application.set_render(render);
     // Run application
     application.run();
-}
+}*/

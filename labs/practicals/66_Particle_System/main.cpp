@@ -1,4 +1,4 @@
-#include <graphics_framework.h>
+/*#include <graphics_framework.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -275,4 +275,4 @@ void main()
     application.set_render(render);
     // Run application
     application.run();
-}
+}*/

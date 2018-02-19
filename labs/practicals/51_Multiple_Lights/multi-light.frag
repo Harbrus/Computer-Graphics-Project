@@ -40,9 +40,9 @@ uniform vec3 eye_pos;
 uniform sampler2D tex;
 
 // Incoming position
-layout(location = 0) in vec3 position;
+layout(location = 0) in vec3 vertex_position;
 // Incoming normal
-layout(location = 1) in vec3 normal;
+layout(location = 1) in vec3 transformed_normal;
 // Incoming texture coordinate
 layout(location = 2) in vec2 tex_coord;
 
@@ -54,24 +54,44 @@ vec4 calculate_point(in point_light point, in material mat, in vec3 position, in
                      in vec4 tex_colour) {
   // *********************************
   // Get distance between point light and vertex
-
+  float d = distance(point.position, vertex_position);
   // Calculate attenuation factor
-
+  float attenuation = (point.constant + point.linear*d + point.quadratic*d*d);
   // Calculate light colour
-
+  vec4 light_colour = point.light_colour/attenuation;
 
   // Calculate light dir
-
+  vec3 light_dir = normalize(point.position - vertex_position);
   // Now use standard phong shading but using calculated light colour and direction
   // - note no ambient
 
+  // Calculate k
+  float kd = max(dot(transformed_normal, light_dir),0.0f);
 
+  vec4 diffuse = kd * mat.diffuse_reflection * light_colour;
 
+  // Calculate half vector between view_dir and light_dir
+  vec3 H = normalize(light_dir+view_dir);
 
+  // Calculate specular component
+  // Calculate k
+  float ks = pow(max(dot(transformed_normal, H),0.0f), mat.shininess);
+  vec4 specular = ks * (mat.specular_reflection * light_colour);
+  // Calculate primary colour component
+  // Set primary
+  vec4 primary = mat.emissive + diffuse;
+  
+  // Set secondary
+  vec4 secondary = specular;
 
+  // Calculate final colour - remember alpha
+  primary.a = 1.0f;
+  secondary.a = 1.0f;
 
-  // *********************************
+  colour = primary*tex_colour + secondary;
+
   return colour;
+  
 }
 
 // Spot light calculation
@@ -79,41 +99,63 @@ vec4 calculate_spot(in spot_light spot, in material mat, in vec3 position, in ve
                     in vec4 tex_colour) {
   // *********************************
   // Calculate direction to the light
-
+  vec3 light_dir = normalize(spot.position - vertex_position);
   // Calculate distance to light
-
+  float d = distance(spot.position, vertex_position);
   // Calculate attenuation value
-
+  float ka = (spot.constant + spot.linear*d + spot.quadratic*d*d);
   // Calculate spot light intensity
-
+  float light_intensity = pow(max(dot((-1)*spot.direction,light_dir),0.0f),spot.power);
   // Calculate light colour
-
+   vec4 light_colour = spot.light_colour * (light_intensity / ka);
   // Now use standard phong shading but using calculated light colour and direction
-  // - note no ambient
+   // Calculate k
+  float kd = max(dot(transformed_normal, light_dir),0.0f);
+  
+  // Calculate diffuse
+  vec4 diffuse = kd * mat.diffuse_reflection * light_colour;
+  
+  // Calculate half vector between view_dir and light_dir
+  vec3 H = normalize(light_dir+view_dir);
 
+  // Calculate specular component
+  // Calculate k
+  float ks = pow(max(dot(transformed_normal, H),0.0f),mat.shininess);
+  
+  // Calculate specular
+  vec4 specular = ks * (mat.specular_reflection * light_colour);
 
+  // Calculate primary colour component
+  // Set primary
+  vec4 primary = mat.emissive + diffuse;
+  
+  // Set secondary
+  vec4 secondary = specular;
 
+  // Calculate final colour - remember alpha
+  primary.a = 1.0f;
+  secondary.a = 1.0f;
 
-
-  // *********************************
+  colour = primary*tex_colour + secondary;
   return colour;
 }
 
 void main() {
-
-  colour = vec4(0.0, 0.0, 0.0, 1.0);
+ colour = vec4(0.0, 0.0, 0.0, 1.0);
   // *********************************
   // Calculate view direction
+      vec3 view_dir = normalize(eye_pos-vertex_position);
 
   // Sample texture
+	  vec4 tex_colour = texture(tex, tex_coord);
 
   // Sum point lights
-
-
-
+	for (int i = 0; i < 4; ++i)
+		colour += calculate_point(points[i], mat, vertex_position, transformed_normal, view_dir, tex_colour);
+			
   // Sum spot lights
+  for (int i = 0; i < 5; ++i)
+		colour +=  calculate_spot(spots[i], mat, vertex_position, transformed_normal, view_dir, tex_colour);
 
-
-
-  // *********************************
+	colour.a = 1.0f;
 }
