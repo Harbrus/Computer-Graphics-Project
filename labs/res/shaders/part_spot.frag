@@ -26,24 +26,24 @@ struct material
 #endif
 
 // Spot light calculation
-vec4 calculate_spot(in spot_light spot, in material mat, in vec3 position, in vec3 normal, in vec3 view_dir, in vec4 tex_colour)
+vec4 calculate_spot(in spot_light spot, in material mat, in vec3 vertex_pos, in vec3 transformed_normal, in vec3 view_dir, in vec4 tex_colour)
 {
 	// *********************************
 	// Calculate direction to the light
-
+	vec3 light_dir = normalize(spot.position - vertex_pos);
 	// Calculate distance to light
-
+	float d = distance(spot.position, vertex_pos);
 	// Calculate attenuation value :  (constant + (linear * d) + (quadratic * d * d)
-
+	float att_fat = spot.constant + spot.linear * d + spot.quadratic * pow(d, 2);
 	// Calculate spot light intensity :  (max( dot(light_dir, -direction), 0))^power
-
+	float intensity = max(dot(-light_dir, spot.direction), 0.0f);
 	// Calculate light colour:  (intensity / attenuation) * light_colour
-
+	vec4 light_col = ((pow(intensity, spot.power))/att_fat) * spot.light_colour;
 	// *********************************
 	// Now use standard phong shading but using calculated light colour and direction
-	vec4 diffuse = (mat.diffuse_reflection * light_colour) * max(dot(normal, light_dir), 0.0);
+	vec4 diffuse = (mat.diffuse_reflection * light_col) * max(dot(transformed_normal, light_dir), 0.0);
 	vec3 half_vector = normalize(light_dir + view_dir);
-	vec4 specular = (mat.specular_reflection * light_colour) * pow(max(dot(normal, half_vector), 0.0), mat.shininess);
+	vec4 specular = (mat.specular_reflection * light_col) * pow(max(dot(transformed_normal, half_vector), 0.0), mat.shininess);
 	
 	vec4 colour = ((mat.emissive + diffuse) * tex_colour) + specular;
 	colour.a = 1.0;

@@ -87,7 +87,6 @@ bool update(float delta_time) {
 
   double current_x;
   double current_y;
-  // *********************************
   // Get the current cursor position
   glfwGetCursorPos(renderer::get_window(), &current_x, &current_y);
   // Calculate delta of cursor positions from last frame

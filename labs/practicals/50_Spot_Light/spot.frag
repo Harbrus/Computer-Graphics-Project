@@ -22,7 +22,7 @@ struct material {
 // Spot light being used in the scene
 uniform spot_light spot;
 // Material of the object being rendered
-uniform material mat;
+uniform material nMat;
 // Position of the eye (camera)
 uniform vec3 eye_pos;
 // Texture to sample from
@@ -39,7 +39,7 @@ layout(location = 2) in vec2 tex_coord_out;
 layout(location = 0) out vec4 colour;
 
 void main() {
-  // *********************************
+
   // Calculate direction to the light
   vec3 light_dir = normalize(spot.position - vertex_position); 
   // Calculate distance to light
@@ -59,28 +59,23 @@ void main() {
     // Calculate k
   float ka = max(dot(transformed_normal, light_dir), 0.0f);
   // Calculate diffuse
-  vec4 diffuse = ka * (mat.diffuse_reflection * light_colour);
+  vec4 diffuse = ka * (nMat.diffuse_reflection * light_colour);
   // Calculate view direction
   vec3 view_dir = normalize(eye_pos - vertex_position);
   // Calculate half vector
   vec3 half_vector  = normalize(light_dir + view_dir);
   // Calculate specular component
   // Calculate k
-  float kb = pow(max(dot(transformed_normal, half_vector), 0.0f), mat.shininess);
+  float kb = pow(max(dot(transformed_normal, half_vector), 0.0f), nMat.shininess);
   // Calculate specular
-  vec4 specular = kb * (mat.specular_reflection * light_colour);
+  vec4 specular = kb * (nMat.specular_reflection * light_colour);
   // Sample texture
   vec4 sample_texture = texture(tex, tex_coord_out);
   // Calculate primary colour component
-  vec4 primary = (mat.emissive + diffuse);
+  vec4 primary = (nMat.emissive + diffuse);
   // Calculate final colour - remember alpha
   primary.a = 1.0f;
   colour = (primary * sample_texture) + specular;
   colour.a = 1.0f;
 
-
-
-
-
-  // *********************************
 }

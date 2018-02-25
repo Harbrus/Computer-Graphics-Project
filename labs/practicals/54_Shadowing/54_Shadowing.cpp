@@ -18,13 +18,31 @@ bool load_content() {
 	// Create shadow map- use screen size
 	shadow = shadow_map(renderer::get_screen_width(), renderer::get_screen_height());
 	// Create plane mesh
-	meshes["plane"] = mesh(geometry_builder::create_plane());
-	// Create "teapot" mesh by loading in models/teapot.obj
+	meshes["box"] = mesh(geometry_builder::create_box(vec3(1.0f, 2.0f, 1.0f)));
 	meshes["teapot"] = mesh((geometry("models/teapot.obj")));
-	// Translate Teapot(0,4,0)
-	meshes["teapot"].get_transform().translate(vec3(0, 4, 0));
-	// Scale the teapot - (0.1, 0.1, 0.1)
-	meshes["teapot"].get_transform().scale *= vec3(0.1, 0.1, 0.1);
+	meshes["pyramid"] = mesh(geometry_builder::create_pyramid());
+	meshes["pyramid2"] = mesh(geometry_builder::create_pyramid());
+	meshes["cylinder"] = mesh(geometry_builder::create_cylinder(20, 20));
+	meshes["sphere"] = mesh(geometry_builder::create_sphere(20, 20));
+	meshes["torus"] = mesh(geometry_builder::create_torus(20, 20, 1.0f, 5.0f));
+
+	// Transform objects
+	meshes["box"].get_transform().scale = vec3(5.0f, 5.0f, 5.0f);
+	meshes["box"].get_transform().translate(vec3(-10.0f, 10.5f, -30.0f));
+	meshes["teapot"].get_transform().scale = vec3(0.1f, 0.1f, 0.1f);
+	meshes["teapot"].get_transform().translate(vec3(-20.0f, 10.0f, -10.0f));
+	meshes["pyramid"].get_transform().scale = vec3(5.0f, 5.0f, 5.0f);
+	meshes["pyramid"].get_transform().translate(vec3(-10.0f, 18.0f, -30.0f));
+	meshes["pyramid2"].get_transform().scale = vec3(5.0f, 5.0f, 3.0f);
+	meshes["pyramid2"].get_transform().translate(vec3(-15.0f, 11.5f, -30.0f));
+	meshes["cylinder"].get_transform().scale = vec3(5.0f, 5.0f, 5.0f);
+	meshes["cylinder"].get_transform().translate(vec3(-25.0f, 2.5f, -25.0f));
+	meshes["sphere"].get_transform().scale = vec3(2.5f, 2.5f, 2.5f);
+	meshes["sphere"].get_transform().translate(vec3(0.0f, 10.0f, -25.0f));
+	meshes["torus"].get_transform().translate(vec3(0.0f, 10.0f, -25.0f));
+	meshes["torus"].get_transform().rotate(vec3(half_pi<float>(), 0.0f, 0.0f));
+	meshes["plane"].get_transform().scale = vec3(1.5f, 1.0f, 1.5f);
+
 	// *********************************
 
 	// Load texture
@@ -36,16 +54,21 @@ bool load_content() {
 	// - all specular is white
 	// - all shininess is 25
 	// ***********************
-	// White plane
-	meshes["plane"].get_material().set_emissive(vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	meshes["plane"].get_material().set_diffuse(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	meshes["plane"].get_material().set_specular(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	meshes["plane"].get_material().set_shininess(25.0f);
-	// Red teapot
-	meshes["teapot"].get_material().set_emissive(vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	meshes["teapot"].get_material().set_diffuse(vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	meshes["teapot"].get_material().set_specular(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	meshes["teapot"].get_material().set_shininess(25.0f);
+	material mat;
+	//set material
+	mat.set_emissive(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	mat.set_diffuse(vec4(1.0f));
+	mat.set_specular(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	mat.set_shininess(10.0f);
+
+	meshes["box"].set_material(mat);
+	meshes["pyramid"].set_material(mat);
+	meshes["pyramid2"].set_material(mat);
+	meshes["cylinder"].set_material(mat);
+	meshes["sphere"].set_material(mat);
+	meshes["torus"].set_material(mat);
+	meshes["teapot"].set_material(mat);
+	meshes["plane"].set_material(mat);
 
 	// *******************  
 	// Set spot properties
@@ -56,7 +79,7 @@ bool load_content() {
 	spot.set_position(vec3(30.0f, 20.0f, 0.0f));
 	spot.set_light_colour(vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	spot.set_direction(normalize(-spot.get_position()));
-	spot.set_range(500.0f);
+	spot.set_range(50.0f);
 	spot.set_power(10.0f);
 
 	// Load in shaders
